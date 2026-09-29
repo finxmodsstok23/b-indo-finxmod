@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Uraian Bahasa Indonesia XII - SMAN 1 Badegan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0fdfa',
+                            100: '#ccfbf1',
+                            400: '#2dd4bf',
+                            500: '#14b8a6',
+                            600: '#0d9488',
+                            900: '#134e4a',
+                        },
+                        glass: {
+                            bg: 'rgba(15, 23, 42, 0.75)',
+                            border: 'rgba(255, 255, 255, 0.12)',
+                            card: 'rgba(30, 41, 59, 0.7)',
+                            hover: 'rgba(51, 65, 85, 0.8)'
+                        }
+                    },
+                    boxShadow: {
+                        'neon-teal': '0 0 20px -3px rgba(20, 184, 166, 0.35)',
+                        'neon-purple': '0 0 20px -3px rgba(168, 85, 247, 0.35)',
+                        'glass-glow': '0 8px 32px 0 rgba(0, 0, 0, 0.37)'
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: radial-gradient(circle at 10% 20%, rgb(15, 23, 42) 0%, rgb(30, 27, 75) 50%, rgb(15, 23, 42) 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: #f1f5f9;
+        }
+
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .glass-card {
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .glass-card:hover {
+            border-color: rgba(45, 212, 191, 0.3);
+            background: rgba(30, 41, 59, 0.8);
+        }
+
+        .gradient-text-teal {
+            background: linear-gradient(135deg, #2dd4bf 0%, #38bdf8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .gradient-text-purple {
+            background: linear-gradient(135deg, #c084fc 0%, #f472b6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.6);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(51, 65, 85, 0.8);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(20, 184, 166, 0.6);
+        }
+
+        .custom-ring {
+            box-shadow: 0 0 0 2px rgba(45, 212, 191, 0.4);
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 0.9; transform: scale(1.02); }
+        }
+
+        .animate-pulse-slow {
+            animation: pulse-glow 4s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="antialiased text-slate-100 min-h-screen flex flex-col justify-between selection:bg-brand-500 selection:text-white">
+
+    <script>
+        class AudioSynthesizer {
+            constructor() {
+                this.ctx = null;
+                this.isMuted = false;
+            }
+
+            init() {
+                if (!this.ctx) {
+                    const AudioContext = window.AudioContext || window.webkitAudioContext;
+                    this.ctx = new AudioContext();
+                }
+            }
+
+            playClick() {
+                if (this.isMuted) return;
+                this.init();
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(600, this.ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(800, this.ctx.currentTime + 0.05);
+                gain.gain.setValueAtTime(0.1, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.05);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start();
+                osc.stop(this.ctx.currentTime + 0.05);
+            }
+
+            playCorrect() {
+                if (this.isMuted) return;
+                this.init();
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(523.25, now); // C5
+                osc.frequency.setValueAtTime(659.25, now + 0.08); // E5
+                osc.frequency.setValueAtTime(783.99, now + 0.16); // G5
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.35);
+            }
+
+            playWrong() {
+                if (this.isMuted) return;
+                this.init();
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(220, now);
+                osc.frequency.setValueAtTime(180, now + 0.1);
+                gain.gain.setValueAtTime(0.12, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.25);
+            }
+
+            playFinish() {
+                if (this.isMuted) return;
+                this.init();
+                const now = this.ctx.currentTime;
+                const freqs = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+                freqs.forEach((freq, idx) => {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, now + idx * 0.1);
+                    gain.gain.setValueAtTime(0.15, now + idx * 0.1);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.1 + 0.4);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start(now + idx * 0.1);
+                    osc.stop(now + idx * 0.1 + 0.4);
+                });
+            }
+        }
+
+        const soundFX = new AudioSynthesizer();
+    </script>
+
+    <header class="sticky top-0 z-40 glass-panel border-b border-slate-800 shadow-xl">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
+            <!-- Logo & Title -->
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-teal-500 to-emerald-400 flex items-center justify-center text-slate-950 font-extrabold text-xl shadow-neon-teal">
+                    ✍️
+                </div>
+                <div>
+                    <div class="flex items-center space-x-2">
+                        <h1 class="text-base sm:text-lg font-bold tracking-tight text-white flex items-center">
+                            Kuis Uraian Bahasa Indonesia XII
+                        </h1>
+                        <span class="bg-teal-500/20 text-teal-300 border border-teal-500/30 text-xs px-2 py-0.5 rounded-full font-medium hidden sm:inline-block">Fase F</span>
+                    </div>
+                    <p class="text-xs text-slate-400 flex items-center gap-1">
+                        <span>SMAN 1 BADEGAN</span>
+                        <span>•</span>
+                        <span class="text-teal-400">Sumatif Tengah Semester 1</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Header Controls & Badges -->
+            <div class="flex items-center space-x-2 sm:space-x-4">
+                <!-- Kisi-kisi Modal Trigger -->
+                <button onclick="toggleKisiKisiModal(true)" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700 transition-all flex items-center gap-1.5">
+                    <svg class="w-4 h-4 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    <span class="hidden md:inline">Kisi-Kisi SMAN 1 Badegan</span>
+                    <span class="md:hidden">Kisi-Kisi</span>
+                </button>
+
+                <!-- Sound Toggle -->
+                <button id="audioToggleBtn" onclick="toggleAudio()" class="p-2 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700 transition-all" title="Toggle Efek Suara">
+                    <svg id="soundOnIcon" class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072M18.364 5.636a9 9 0 010 12.728M11 5L6 9H2v6h4l5 4V5z"></path></svg>
+                    <svg id="soundOffIcon" class="w-4 h-4 text-slate-500 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" clip-rule="evenodd"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"></path></svg>
+                </button>
+
+                <!-- Mobile Navigation Drawer Toggle -->
+                <button onclick="toggleMobileDrawer(true)" class="lg:hidden p-2 rounded-lg bg-teal-500/20 text-teal-300 border border-teal-500/30">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 grow w-full">
+        <!-- Top Toolbar: Mode Switcher & Timer Bar -->
+        <div class="glass-panel p-4 rounded-2xl mb-6 shadow-xl flex flex-wrap items-center justify-between gap-4">
+            <!-- Mode Switcher -->
+            <div class="flex items-center bg-slate-900/80 p-1 rounded-xl border border-slate-800">
+                <button id="modePracticeBtn" onclick="switchMode('practice')" class="px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all flex items-center gap-2 bg-teal-500 text-slate-950 shadow-neon-teal">
+                    <span>💡 Mode Latihan</span>
+                    <span class="text-[10px] bg-slate-900/40 text-slate-900 px-1.5 py-0.5 rounded font-bold">Uji Konsep & Petunjuk</span>
+                </button>
+                <button id="modeExamBtn" onclick="switchMode('exam')" class="px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold text-slate-400 hover:text-white transition-all flex items-center gap-2">
+                    <span>⏱️ Mode Ujian</span>
+                    <span class="text-[10px] bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded">Evaluasi Penuh</span>
+                </button>
+            </div>
+
+            <!-- Timer & Quick Info -->
+            <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-2 bg-slate-900/90 border border-slate-800 px-4 py-2 rounded-xl">
+                    <svg class="w-4 h-4 text-teal-400 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span class="text-xs text-slate-400 font-medium">Waktu:</span>
+                    <span id="timerDisplay" class="font-mono text-base font-bold text-teal-300">00:00</span>
+                </div>
+
+                <div class="hidden md:flex items-center space-x-2 bg-slate-900/90 border border-slate-800 px-4 py-2 rounded-xl">
+                    <span class="text-xs text-slate-400">Total Progres:</span>
+                    <span id="headerProgressText" class="text-xs font-bold text-emerald-400">0/15 Terjawab</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+            <!-- Sidebar Desktop: Question Matrix -->
+            <aside class="hidden lg:block lg:col-span-3">
+                <div class="glass-panel p-5 rounded-2xl sticky top-24 border border-slate-800 space-y-4">
+                    <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
+                        <h2 class="text-sm font-bold text-slate-200 uppercase tracking-wider flex items-center gap-2">
+                            <span>Peta Soal</span>
+                            <span class="text-xs px-2 py-0.5 bg-slate-800 rounded-full text-slate-400 font-normal">15 Soal</span>
+                        </h2>
+                        <span id="completionPercent" class="text-xs font-bold text-teal-400">0%</span>
+                    </div>
+
+                    <!-- Question Grid Buttons -->
+                    <div id="questionMatrixDesktop" class="grid grid-cols-5 gap-2">
+                        <!-- JS populated -->
+                    </div>
+
+                    <!-- Status Legend -->
+                    <div class="pt-3 border-t border-slate-800/80 space-y-2 text-[11px] text-slate-400">
+                        <div class="flex items-center gap-2">
+                            <span class="w-3 h-3 rounded bg-slate-800 border border-slate-700"></span>
+                            <span>Belum Diisi</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="w-3 h-3 rounded bg-emerald-500/20 border border-emerald-500/50 text-emerald-300"></span>
+                            <span>Sudah Terisi</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="w-3 h-3 rounded bg-amber-500/20 border border-amber-500/50"></span>
+                            <span>Ragu-Ragu / Tinjau</span>
+                        </div>
+                    </div>
+
+                    <!-- Finish Exam Trigger Button -->
+                    <button onclick="confirmFinishExam()" class="w-full mt-4 py-3 bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-400 hover:to-emerald-400 text-slate-950 font-bold rounded-xl text-sm shadow-neon-teal transition-all flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                        <span>Selesaikan Kuis</span>
+                    </button>
+                </div>
+            </aside>
+
+            <!-- Main Interactive Question Workspace -->
+            <section class="lg:col-span-9 space-y-6">
+                <div id="questionCard" class="glass-panel p-6 sm:p-8 rounded-2xl border border-slate-800 space-y-6 relative overflow-hidden shadow-2xl">
+                    <!-- Top Category & Navigation Info -->
+                    <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800/80 pb-4">
+                        <div class="flex items-center space-x-3">
+                            <span id="questionNumberBadge" class="px-3.5 py-1 bg-teal-500/20 border border-teal-500/40 text-teal-300 rounded-xl font-bold text-sm">
+                                Soal 1 dari 15
+                            </span>
+                            <span id="questionTopicBadge" class="px-3 py-1 bg-purple-500/10 border border-purple-500/30 text-purple-300 rounded-xl font-medium text-xs">
+                                Teks Prosedur Kompleks
+                            </span>
+                        </div>
+                        
+                        <div class="flex items-center space-x-2">
+                            <button id="flagBtn" onclick="toggleFlagCurrentQuestion()" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800/80 hover:bg-slate-700 border border-slate-700 text-slate-400 flex items-center gap-1.5 transition-all">
+                                <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9"></path></svg>
+                                <span id="flagBtnText">Tandai Ragu</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Question Prompt / Context Stimulus -->
+                    <div class="space-y-3">
+                        <h3 id="questionTitle" class="text-lg sm:text-xl font-bold text-slate-100 leading-snug">
+                            <!-- Question Title Dynamic -->
+                        </h3>
+                        <div id="questionStimulus" class="text-sm sm:text-base text-slate-300 bg-slate-900/60 p-4 rounded-xl border border-slate-800 leading-relaxed">
+                            <!-- Question Stimulus Dynamic -->
+                        </div>
+                    </div>
+
+                    <!-- Interactive Essay Textarea Section -->
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between text-xs text-slate-400">
+                            <label for="answerInput" class="font-semibold text-slate-300 flex items-center gap-1.5">
+                                <svg class="w-4 h-4 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                                Jawaban Uraian Anda:
+                            </label>
+                            <div class="flex items-center space-x-3 font-mono text-[11px]">
+                                <span>Jumlah Kata: <strong id="wordCountDisplay" class="text-teal-400 font-bold">0</strong></span>
+                                <span>•</span>
+                                <span>Karakter: <strong id="charCountDisplay" class="text-purple-400 font-bold">0</strong></span>
+                            </div>
+                        </div>
+
+                        <textarea id="answerInput" oninput="handleAnswerInput(this.value)" rows="7" placeholder="Tuliskan jawaban lengkap Anda di sini... Jelaskan secara sistematis sesuai dengan struktur dan indikator soal." class="w-full bg-slate-900/90 border border-slate-700/80 focus:border-teal-400 focus:ring-2 focus:ring-teal-400/20 rounded-xl p-4 text-sm text-slate-100 placeholder-slate-500 transition-all leading-relaxed resize-y"></textarea>
+                    </div>
+
+                    <div id="practiceEvaluationPanel" class="p-4 bg-slate-900/80 rounded-xl border border-teal-500/20 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <h4 class="text-xs font-bold uppercase tracking-wider text-teal-400 flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                Live Key Concept Matching Engine (Uji Kelengkapan Concept)
+                            </h4>
+                            <span id="liveConceptScoreBadge" class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-slate-800 border border-slate-700 text-slate-400">
+                                Kelengkapan: 0%
+                            </span>
+                        </div>
+
+                        <p class="text-xs text-slate-400">
+                            Sistem secara otomatis mendeteksi keberadaan kata kunci / konsep penting dalam jawaban Anda secara real-time:
+                        </p>
+
+                        <!-- Concept Chips -->
+                        <div id="conceptChipsContainer" class="flex flex-wrap gap-2 pt-1">
+                            <!-- Populated dynamically -->
+                        </div>
+
+                        <!-- Hints & Model Answer Trigger in Practice Mode -->
+                        <div class="pt-2 flex flex-wrap items-center justify-between gap-2">
+                            <button id="toggleHintBtn" onclick="toggleHint()" class="text-xs font-medium text-amber-400 hover:text-amber-300 flex items-center gap-1">
+                                💡 <span>Tampilkan Petunjuk Kata Kunci</span>
+                            </button>
+                            
+                            <button id="revealAnswerBtn" onclick="toggleModelAnswer()" class="text-xs font-medium text-teal-400 hover:text-teal-300 flex items-center gap-1">
+                                📖 <span>Lihat Kunci Jawaban Ideal Baku</span>
+                            </button>
+                        </div>
+
+                        <!-- Hint Box -->
+                        <div id="hintBox" class="hidden p-3 bg-amber-500/10 border border-amber-500/30 rounded-lg text-xs text-amber-200">
+                            <!-- Populated dynamically -->
+                        </div>
+
+                        <!-- Model Answer Box -->
+                        <div id="modelAnswerBox" class="hidden p-4 bg-slate-950 border border-teal-500/40 rounded-xl space-y-2 text-xs">
+                            <div class="font-bold text-teal-300 flex items-center justify-between border-b border-slate-800 pb-1">
+                                <span>Kunci Jawaban Ideal / Pembahasan Baku SMAN 1 Badegan:</span>
+                                <span class="text-[10px] bg-teal-900/50 text-teal-300 px-2 py-0.5 rounded">Fase F - XII</span>
+                            </div>
+                            <div id="modelAnswerText" class="text-slate-300 leading-relaxed font-sans">
+                                <!-- Populated dynamically -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Navigation Action Buttons -->
+                    <div class="flex items-center justify-between pt-4 border-t border-slate-800/80">
+                        <button id="prevBtn" onclick="navigateQuestion(-1)" class="px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-all flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            <span>Sebelumnya</span>
+                        </button>
+
+                        <button id="nextBtn" onclick="navigateQuestion(1)" class="px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-teal-500 hover:bg-teal-400 text-slate-950 shadow-neon-teal transition-all flex items-center gap-2">
+                            <span>Berikutnya</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <div id="mobileDrawer" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden transition-opacity">
+        <div class="fixed inset-y-0 right-0 w-full max-w-xs glass-panel p-6 shadow-2xl flex flex-col justify-between overflow-y-auto">
+            <div class="space-y-4">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                    <h3 class="font-bold text-slate-200 text-base">Peta Soal Matrix</h3>
+                    <button onclick="toggleMobileDrawer(false)" class="p-1 rounded-lg text-slate-400 hover:text-white">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+                
+                <p class="text-xs text-slate-400">Pilih nomor untuk melompat langsung ke soal:</p>
+
+                <!-- Matrix in drawer -->
+                <div id="questionMatrixMobile" class="grid grid-cols-5 gap-2">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+
+            <div class="pt-6 border-t border-slate-800 space-y-3">
+                <button onclick="toggleMobileDrawer(false); confirmFinishExam();" class="w-full py-3 bg-gradient-to-r from-teal-500 to-emerald-500 text-slate-950 font-bold rounded-xl text-sm shadow-neon-teal">
+                    Selesaikan Kuis Uraian
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="resultsModal" class="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-xl hidden overflow-y-auto p-4 sm:p-6 lg:p-8">
+        <div class="max-w-4xl mx-auto glass-panel border border-slate-800 rounded-3xl p-6 sm:p-10 space-y-8 my-8 shadow-2xl">
+            <!-- Header Result -->
+            <div class="text-center space-y-3 border-b border-slate-800/80 pb-6">
+                <span class="px-4 py-1.5 bg-teal-500/20 text-teal-300 border border-teal-500/30 text-xs font-bold rounded-full uppercase tracking-widest">
+                    Hasil Penilaian Sumatif Uraian
+                </span>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-white">
+                    Evaluasi Kuis Bahasa Indonesia XII SMAN 1 Badegan
+                </h2>
+                <p class="text-xs sm:text-sm text-slate-400">
+                    Berdasarkan Kisi-Kisi STS 1 Materi Teks Prosedur Kompleks & Teks Eksplanasi Kompleks
+                </p>
+            </div>
+
+            <!-- Score Summary & Radial Gauge -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+                <!-- Radial Chart Score Box -->
+                <div class="md:col-span-1 glass-card p-6 rounded-2xl border border-slate-800 text-center space-y-3 flex flex-col items-center justify-center">
+                    <div class="relative w-36 h-36 flex items-center justify-center">
+                        <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+                            <path class="text-slate-800" stroke-width="3.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                            <path id="scoreRadialPath" class="text-teal-400 transition-all duration-1000 ease-out" stroke-dasharray="0, 100" stroke-width="3.5" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                        </svg>
+                        <div class="absolute flex flex-col items-center justify-center">
+                            <span id="finalScoreText" class="text-3xl font-black text-white font-mono">0</span>
+                            <span class="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Skor Total / 100</span>
+                        </div>
+                    </div>
+
+                    <div id="predicateBadge" class="px-3 py-1 bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 rounded-full text-xs font-bold">
+                        Predikat: Sangat Baik (A)
+                    </div>
+                </div>
+
+                <!-- Metrics Statistics -->
+                <div class="md:col-span-2 space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-1">
+                            <span class="text-xs text-slate-400">Cakupan Kelengkapan Konsep</span>
+                            <div class="text-xl font-bold text-teal-300 font-mono" id="conceptAccuracyMetric">0%</div>
+                            <span class="text-[10px] text-slate-500">Kesesuaian dengan Kata Kunci</span>
+                        </div>
+
+                        <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-1">
+                            <span class="text-xs text-slate-400">Total Kata Ditulis</span>
+                            <div class="text-xl font-bold text-purple-300 font-mono" id="totalWordsMetric">0 Kata</div>
+                            <span class="text-[10px] text-slate-500">Kedalaman Argumentasi Uraian</span>
+                        </div>
+
+                        <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-1">
+                            <span class="text-xs text-slate-400">Waktu Pengerjaan</span>
+                            <div class="text-xl font-bold text-amber-300 font-mono" id="timeSpentMetric">00:00</div>
+                            <span class="text-[10px] text-slate-500">Durasi Pengerjaan Soal</span>
+                        </div>
+
+                        <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-1">
+                            <span class="text-xs text-slate-400">Status Kelulusan KKM (75)</span>
+                            <div id="kkmStatusMetric" class="text-xl font-bold text-emerald-400">TUNTAS</div>
+                            <span class="text-[10px] text-slate-500">Standar Nilai Minimum SMAN 1 Badegan</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detailed Answers & Review Controls -->
+            <div class="space-y-4 pt-4 border-t border-slate-800">
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                    <h3 class="font-bold text-lg text-slate-200">Pembahasan Detail Per Soal</h3>
+                    
+                    <!-- Filters -->
+                    <div class="flex items-center space-x-2 bg-slate-900/80 p-1 rounded-xl border border-slate-800 text-xs">
+                        <button onclick="filterReviewCards('all')" id="filterAllBtn" class="px-3 py-1 rounded-lg font-medium bg-slate-800 text-teal-300">Semua (15)</button>
+                        <button onclick="filterReviewCards('high')" id="filterHighBtn" class="px-3 py-1 rounded-lg font-medium text-slate-400 hover:text-white">Sangat Lengkap (>=80%)</button>
+                        <button onclick="filterReviewCards('low')" id="filterLowBtn" class="px-3 py-1 rounded-lg font-medium text-slate-400 hover:text-white">Perlu Dilengkapi (&lt;80%)</button>
+                    </div>
+                </div>
+
+                <!-- Cards Container -->
+                <div id="reviewCardsContainer" class="space-y-4 max-h-96 overflow-y-auto pr-2">
+                    <!-- Dynamic review items populated here -->
+                </div>
+            </div>
+
+            <!-- Modal Bottom Actions -->
+            <div class="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-slate-800">
+                <button onclick="resetQuiz()" class="px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-all flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    <span>Ulangi Kuis Uraian</span>
+                </button>
+
+                <button onclick="toggleResultsModal(false)" class="px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-teal-500 hover:bg-teal-400 text-slate-950 shadow-neon-teal transition-all">
+                    Tutup & Kembali ke Lembar Jawaban
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="kisiKisiModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden overflow-y-auto p-4 sm:p-6">
+        <div class="max-w-3xl mx-auto glass-panel border border-slate-800 rounded-2xl p-6 space-y-6 my-10 shadow-2xl">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                <div class="flex items-center space-x-3">
+                    <span class="text-2xl">📋</span>
+                    <div>
+                        <h3 class="font-bold text-lg text-white">Kisi-Kisi Sumatif Tengah Semester 1</h3>
+                        <p class="text-xs text-slate-400">Bahasa Indonesia Kelas XII (Fase F) - SMAN 1 BADEGAN PONOROGO</p>
+                    </div>
+                </div>
+                <button onclick="toggleKisiKisiModal(false)" class="p-1 rounded-lg text-slate-400 hover:text-white">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+
+            <div class="space-y-4 text-xs text-slate-300 leading-relaxed max-h-96 overflow-y-auto pr-2">
+                <div class="p-3 bg-slate-900/80 rounded-xl border border-slate-800 space-y-1">
+                    <span class="font-bold text-teal-300">Capaian Pembelajaran (CP):</span>
+                    <p>Peserta didik mampu menganalisis, mengevaluasi, mengkreasi, dan mengkonstruksi informasi berupa gagasan, pikiran, perasaan, pandangan, arahan atau pesan yang akurat dari berbagai jenis teks (prosedur & eksplanasi) untuk memecahkan masalah dalam kehidupan sehari-hari.</p>
+                </div>
+
+                <div class="space-y-3">
+                    <h4 class="font-bold text-slate-200 uppercase tracking-wider text-[11px] text-teal-400">Lingkup Materi & Indikator Soal Uraian:</h4>
+                    
+                    <ul class="space-y-2 list-disc list-inside bg-slate-900/50 p-4 rounded-xl border border-slate-800/80">
+                        <li><strong class="text-slate-200">Teks Prosedur Kompleks:</strong> Memahami definisi & 4 bagian struktur baku (Tujuan, Material/Alat, Langkah-langkah kronologis, Penegasan ulang); Menganalisis kalimat imperatif, deklaratif, interogatif, konjungsi temporal/syarat, kata teknis kewirausahaan; Mengonstruksi panduan usaha UMKM; Evaluasi keterbacaan & penyuntingan.</li>
+                        <li><strong class="text-slate-200">Teks Eksplanasi Kompleks:</strong> Memahami definisi & 3 bagian struktur baku (Pernyataan Umum, Deretan Penjelas/Kausalitas, Interpretasi); Menganalisis kaidah kebahasaan (konjungsi kausalitas sebab-akibat, kata kerja pasif, istilah ilmiah); Mengevaluasi teks obesitas & gaya hidup modern; Mengaitkan dengan fenomena sosial/kesehatan sehari-hari; Mengabstraksi gagasan utama.</li>
+                        <li><strong class="text-slate-200">Analisis Komparatif:</strong> Membandingkan perbedaan mendasar tujuan komunikatif, struktur, serta fokus bahasan antara Teks Prosedur Kompleks dan Teks Eksplanasi Kompleks.</li>
+                    </ul>
+                </div>
+
+                <div class="p-3 bg-slate-900/80 rounded-xl border border-slate-800 space-y-1">
+                    <span class="font-bold text-purple-300">Skema & Bobot Evaluasi Uraian:</span>
+                    <p>Setiap soal diukur kelengkapan kata kunci indikatornya (0-100%). Nilai akhir merupakan rata-rata terbobot dari 15 indikator soal uraian.</p>
+                </div>
+            </div>
+
+            <div class="pt-4 border-t border-slate-800 flex justify-end">
+                <button onclick="toggleKisiKisiModal(false)" class="px-5 py-2 bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold rounded-xl text-xs shadow-neon-teal">
+                    Paham, Kembali ke Soal
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const QUIZ_DATA = [
+            {
+                id: 1,
+                topic: "Teks Prosedur Kompleks",
+                title: "Pengertian & Struktur Teks Prosedur Kompleks",
+                stimulus: "Teks prosedur kompleks adalah teks yang berisi langkah-langkah atau tahap-tahap yang harus ditempuh untuk mencapai tujuan dengan penjelasan yang rinci dan terstruktur.",
+                prompt: "Jelaskan secara runtut dan mendalam 4 (empat) bagian struktur utama penyusun Teks Prosedur Kompleks beserta fungsi masing-masing bagiannya dalam sebuah panduan!",
+                hint: "Sebutkan: Tujuan, Alat/Bahan (Material), Langkah-langkah, dan Penegasan Ulang/Penutup.",
+                keywords: [
+                    { phrase: "tujuan", weight: 25, alt: ["tujuan"] },
+                    { phrase: "alat", weight: 25, alt: ["bahan", "material", "perlengkapan"] },
+                    { phrase: "langkah", weight: 25, alt: ["tahap", "instruksi", "tahapan"] },
+                    { phrase: "penegasan ulang", weight: 25, alt: ["penutup", "kesimpulan", "harapan"] }
+                ],
+                modelAnswer: "Struktur Teks Prosedur Kompleks terdiri atas 4 bagian utama:\n1. **Tujuan**: Berisi pengantar, maksud, atau hasil akhir yang ingin dicapai melalui prosedur tersebut.\n2. **Alat dan Bahan (Material)**: Merinci daftar alat, bahan, atau persyaratan yang dibutuhkan sebelum melaksanakan langkah-langkah.\n3. **Langkah-Langkah (Tahapan)**: Berisi urutan tindakan secara kronologis, sistematis, dan logis yang harus diikuti pembaca.\n4. **Penegasan Ulang (Penutup)**: Berisi simpulan, penegasan manfaat, atau ucapan selamat atas keberhasilan mengikuti prosedur."
+            },
+            {
+                id: 2,
+                topic: "Teks Prosedur Kompleks",
+                title: "Ciri Kebahasaan Teks Prosedur Kompleks",
+                stimulus: "Kebahasaan dalam teks prosedur dirancang agar instruksi tepat sasaran dan tidak menimbulkan salah penafsiran bagi pembaca.",
+                prompt: "Sebutkan dan jelaskan 4 (empat) ciri kebahasaan dominan dalam Teks Prosedur Kompleks, serta berikan masing-masing 1 contoh kalimat baku!",
+                hint: "Sebutkan kata kerja/kalimat imperatif, konjungsi temporal, kata teknis, dan kalimat deklaratif/interogatif.",
+                keywords: [
+                    { phrase: "imperatif", weight: 25, alt: ["kata kerja perintah", "perintah"] },
+                    { phrase: "konjungsi temporal", weight: 25, alt: ["kata hubung waktu", "kemudian", "selanjutnya"] },
+                    { phrase: "kata teknis", weight: 25, alt: ["istilah", "istilah khusus"] },
+                    { phrase: "deklaratif", weight: 25, alt: ["interogatif", "kalimat berita", "kalimat tanya"] }
+                ],
+                modelAnswer: "Ciri kebahasaan Teks Prosedur Kompleks meliputi:\n1. **Kalimat/Kata Kerja Imperatif**: Berisi perintah atau arahan tegas. Contoh: *'Aduk bahan hingga merata!'*\n2. **Konjungsi Temporal**: Kata hubung yang menunjukkan urutan waktu. Contoh: *'Kemudian, masukkan larutan ke dalam tabung reaksi.'*\n3. **Kata Teknis / Istilah Khusus**: Kata sesuai bidang pembahasan. Contoh: *'Lakukan verifikasi berkas pada sistem portal online.'*\n4. **Kalimat Deklaratif/Interogatif**: Kalimat penyampaian informasi atau pertanyaan konfirmasi. Contoh: *'Proses validasi membutuhkan waktu 24 jam.'*"
+            },
+            {
+                id: 3,
+                topic: "Teks Prosedur Kompleks",
+                title: "Penggunaan Konjungsi Temporal & Syarat",
+                stimulus: "Cermati petunjuk rumpang berikut: 'Siapkan berkas administrasi usaha. (a) ....., unggah dokumen ke portal OSS. (b) ..... dokumen belum valid, lakukan pembetulan data segera.'",
+                prompt: "Tentukan konjungsi temporal dan konjungsi syarat yang paling tepat untuk mengisi bagian rumpang (a) dan (b) di atas, serta jelaskan alasan pemilihan jenis konjungsi tersebut!",
+                hint: "(a) Konjungsi temporal (selanjutnya/kemudian), (b) Konjungsi syarat (jika/apabila). Jelaskan fungsinya.",
+                keywords: [
+                    { phrase: "selanjutnya", weight: 30, alt: ["kemudian", "setelah itu", "lalu"] },
+                    { phrase: "jika", weight: 30, alt: ["apabila", "bila", "seandainya"] },
+                    { phrase: "temporal", weight: 20, alt: ["urutan waktu"] },
+                    { phrase: "syarat", weight: 20, alt: ["kondisional"] }
+                ],
+                modelAnswer: "1. Bagian (a) diisi dengan konjungsi temporal **'Selanjutnya'** atau **'Kemudian'**, karena berfungsi menghubungkan urutan langkah-langkah kerja secara runtut berdasarkan urutan waktu.\n2. Bagian (b) diisi dengan konjungsi syarat **'Jika'** atau **'Apabila'**, karena menyatakan kondisi/persyaratan yang harus dipenuhi sebelum melanjutkan ke proses berikutnya."
+            },
+            {
+                id: 4,
+                topic: "Teks Prosedur Kompleks",
+                title: "Menulis Teks Prosedur Tema Kewirausahaan / UMKM",
+                stimulus: "Di era digital, banyak wirausahawan muda di Ponorogo dan sekitarnya mengarahkan usahanya ke pemasaran digital.",
+                prompt: "Susunlah kerangka Teks Prosedur Kompleks yang memuat struktur lengkap (Tujuan, Alat/Bahan, dan minimal 3 Langkah Utama) dengan tema: 'Panduan Mendaftarkan Usaha Kuliner Lokal Ponorogo pada Platform Layanan Pesan Antar Online'!",
+                hint: "Pastikan ada judul/tujuan jelas, alat/persyaratan (HP, KTP, Foto produk), dan langkah bertahap.",
+                keywords: [
+                    { phrase: "tujuan", weight: 25, alt: ["maksud", "pendaftaran"] },
+                    { phrase: "ktp", weight: 25, alt: ["alat", "bahan", "smartphone", "foto produk"] },
+                    { phrase: "unduh", weight: 25, alt: ["aplikasi", "registrasi", "langkah 1"] },
+                    { phrase: "verifikasi", weight: 25, alt: ["menu", "unggah", "upload"] }
+                ],
+                modelAnswer: "**Judul**: Panduan Mendaftar Usaha Kuliner Lokal Ponorogo di Aplikasi Pesan Antar Online.\n\n1. **Tujuan**: Membantu pelaku UMKM kuliner di Ponorogo memasarkan produk khas seperti Sate Ponorogo secara meluas secara digital.\n2. **Alat dan Persyaratan**: Smartphone, e-KTP pengusaha, NPWP, foto produk makanan berkualitas tinggi, dan nomor rekening bank aktif.\n3. **Langkah-Langkah**:\n   a. Unduh dan buka aplikasi mitra usaha kuliner resmi di smartphone.\n   b. Buat akun baru dan lengkapi data profil usaha beserta e-KTP.\n   c. Unggah foto daftar menu makanan beserta variasi harga jual baku.\n   d. Kirimkan data dan tunggu proses verifikasi berkas oleh tim penilai."
+            },
+            {
+                id: 5,
+                topic: "Teks Prosedur Kompleks",
+                title: "Merefleksi Gagasan & Evaluasi Keterbacaan Teks Prosedur",
+                stimulus: "Sebuah Teks Prosedur Pengoperasian Mesin Kemasan UMKM ditulis tanpa mencantumkan peringatan keselamatan kerja dan langkah-langkahnya disusun secara acak.",
+                prompt: "Refleksikan dampak yang terjadi apabila teks prosedur tersebut dibaca oleh pekerja awam, dan jelaskan 2 upaya perbaikan untuk meningkatkan keterbacaan serta keamanannya!",
+                hint: "Dampak: risiko kesalahan/kecelakaan kerja; Perbaikan: penyusunan berurutan kronologis dan penambahan peringatan/k3.",
+                keywords: [
+                    { phrase: "kecelakaan", weight: 30, alt: ["kesalahan", "bahaya", "kerusakan"] },
+                    { phrase: "kronologis", weight: 30, alt: ["runtut", "sistematis", "urut"] },
+                    { phrase: "peringatan", weight: 40, alt: ["keselamatan", "k3", "keamanan", "simbol"] }
+                ],
+                modelAnswer: "**Dampak**: Pekerja awam berisiko tinggi mengalami kesalahan fatal saat pengoperasian, merusak mesin, atau mengalami kecelakaan kerja akibat ketidakjelasan instruksi.\n\n**2 Upaya Perbaikan**:\n1. **Restrukturisasi Kronologis**: Menyusun ulang tahapan langkah-langkah secara logis dan runtut menggunakan penomoran berurut.\n2. **Pencantuman Peringatan K3 (Keselamatan Kerja)**: Menambahkan instruksi khusus mengenai keselamatan kerja (misalnya penggunaan sarung tangan dan pelindung) pada tahap kritis."
+            },
+            {
+                id: 6,
+                topic: "Teks Eksplanasi Kompleks",
+                title: "Pengertian & Struktur Teks Eksplanasi Kompleks",
+                stimulus: "Teks eksplanasi kompleks menyajikan penjelasan logis ilmiah mengenai proses terjadinya suatu fenomena alam, sosial, ilmu pengetahuan, atau budaya.",
+                prompt: "Jelaskan secara terperinci 3 (tiga) bagian struktur baku pembentuk Teks Eksplanasi Kompleks beserta fungsi konten masing-masing bagiannya!",
+                hint: "Sebutkan: Pernyataan Umum, Deretan Penjelas (Sebab-Akibat), dan Interpretasi/Ulasan.",
+                keywords: [
+                    { phrase: "pernyataan umum", weight: 35, alt: ["identifikasi fenomena", "pengantar"] },
+                    { phrase: "deretan penjelas", weight: 35, alt: ["sebab akibat", "rangkaian kejadian", "kausalitas"] },
+                    { phrase: "interpretasi", weight: 30, alt: ["ulasan", "penutup", "kesimpulan", "pandangan"] }
+                ],
+                modelAnswer: "Struktur Teks Eksplanasi Kompleks terdiri atas:\n1. **Pernyataan Umum (Identifikasi Fenomena)**: Berisi pengenalan awal fenomena yang akan dijelaskan, berupa definisi singkat, latar belakang, dan gambaran umum.\n2. **Deretan Penjelas (Rangkaian Kejadian/Sebab-Akibat)**: Berisi uraian rinci kronologi serta hubungan sebab-akibat yang menjelaskan *mengapa* dan *bagaimana* fenomena tersebut terjadi.\n3. **Interpretasi (Ulasan/Penutup)**: Berisi kesimpulan, tanggapan, atau pandangan teoretis penulis atas dampak fenomena tersebut."
+            },
+            {
+                id: 7,
+                topic: "Teks Eksplanasi Kompleks",
+                title: "Kaidah Kebahasaan Teks Eksplanasi",
+                stimulus: "Teks eksplanasi mengandalkan hubungan kausalitas dan istilah bidang ilmu untuk menjelaskan fenomena secara objektif.",
+                prompt: "Sebutkan dan jelaskan 3 (tiga) kaidah kebahasaan utama Teks Eksplanasi Kompleks (konjungsi kausalitas, kata kerja pasif, dan istilah ilmiah) beserta contoh konkretnya!",
+                hint: "Konjungsi kausalitas (sebab/karena), kata kerja pasif (di-/ter-), istilah ilmiah (metolisme, obesitas).",
+                keywords: [
+                    { phrase: "kausalitas", weight: 35, alt: ["sebab akibat", "konjungsi sebab"] },
+                    { phrase: "pasif", weight: 30, alt: ["kata kerja pasif", "di-", "ter-"] },
+                    { phrase: "istilah ilmiah", weight: 35, alt: ["kata teknis", "istilah sains"] }
+                ],
+                modelAnswer: "1. **Konjungsi Kausalitas (Sebab-Akibat)**: Kata hubung yang menyatakan hubungan sebab terjadinya fenomena. Contoh: *'Oleh karena itu, penumpukan lemak semakin meningkat.'*\n2. **Kata Kerja Pasif**: Verba bernada objektif yang diawali awalan *di-* atau *ter-*. Contoh: *'Kandungan gula berlebih diproses menjadi cadangan lemak.'*\n3. **Istilah Ilmiah / Teknis**: Kata khusus sesuai disiplin ilmu fenomena tersebut. Contoh: *'Metabolisme, glukosa, indeks massa tubuh (IMT)'*."
+            },
+            {
+                id: 8,
+                topic: "Teks Eksplanasi Kompleks",
+                title: "Mengevaluasi Informasi Teks Eksplanasi Tema Kesehatan (Obesitas)",
+                stimulus: "Bacalah kutipan teks eksplanasi kesehatan berikut:\n'Obesitas pada usia remaja tidak semata-mata disebabkan oleh konsumsi makanan berkalori tinggi, melainkan dipicu oleh melambatnya laju metabolisme akibat kurangnya aktivitas fisik harian dan tingginya durasi perilaku sedentari (duduk terus-menerus).'",
+                prompt: "Berdasarkan kutipan teks di atas, evaluasilah 2 faktor utama penyebab munculnya fenomena obesitas pada remaja menurut penjelasan kausalitas teks tersebut!",
+                hint: "Faktor 1: Konsumsi makanan berkalori tinggi; Faktor 2: Kurangnya aktivitas fisik & perilaku sedentari.",
+                keywords: [
+                    { phrase: "kalori", weight: 50, alt: ["makanan", "pola makan", "asupan makanan"] },
+                    { phrase: "sedentari", weight: 50, alt: ["kurang aktivitas", "aktivitas fisik", "duduk"] }
+                ],
+                modelAnswer: "Berdasarkan teks eksplanasi di atas, dua faktor utama penyebab obesitas remaja adalah:\n1. **Asupan Kalori Tinggi**: Konsumsi makanan atau minuman berkalori tinggi yang melebihi kebutuhan energi harian tubuh.\n2. **Gaya Hidup Sedentari & Kurang Aktivitas Fisik**: Kurangnya gerak tubuh dan kebiasaan duduk pasif dalam jangka waktu lama yang mengakibatkan laju metabolisme pembakaran kalori melambat."
+            },
+            {
+                id: 9,
+                topic: "Teks Eksplanasi Kompleks",
+                title: "Analisis Hubungan Sebab-Akibat (Kausalitas)",
+                stimulus: "Teks eksplanasi menyajikan rantai kausalitas: 'Asupan glukosa berlebih -> Lonjakan insulin -> Penumpukan jaringan adiposa -> Obesitas.'",
+                prompt: "Analisislah rantai kausalitas (sebab-akibat) di atas dan jelaskan secara kalimat efektif bagaimana proses tersebut membentuk suatu fenomena eksplanasi kesehatan!",
+                hint: "Jelaskan bahwa asupan glukosa tinggi memicu insulin, menyebabkan lemak menumpuk, sehingga berujung pada obesitas.",
+                keywords: [
+                    { phrase: "glukosa", weight: 25, alt: ["gula", "asupan"] },
+                    { phrase: "insulin", weight: 25, alt: ["hormon"] },
+                    { phrase: "lemak", weight: 25, alt: ["adiposa", "penumpukan"] },
+                    { phrase: "obesitas", weight: 25, alt: ["kegemukan"] }
+                ],
+                modelAnswer: "Proses kausalitas tersebut dapat dijelaskan sebagai berikut: Konsumsi makanan berglukosa tinggi secara terus-menerus memicu tubuh memproduksi hormon insulin secara berlebihan. Akibatnya, kelebihan gula yang tidak terbakar akan diubah dan disimpan sebagai cadangan lemak pada jaringan adiposa. Penumpukan lemak secara kumulatif dalam jangka panjang inilah yang pada akhirnya menyebabkan fenomena obesitas pada individu."
+            },
+            {
+                id: 10,
+                topic: "Teks Eksplanasi Kompleks",
+                title: "Mengaitkan Teks Eksplanasi Obesitas dengan Fenomena Sehari-hari",
+                stimulus: "Saat ini, marak remaja sekolah yang menghabiskan waktu berjam-jam bermain game di gadget sambil mengonsumsi makanan cepat saji (fast food) dan boba.",
+                prompt: "Kaitkan fenomena kebiasaan sehari-hari remaja modern tersebut dengan prinsip kausalitas dalam teks eksplanasi obesitas yang telah dipelajari!",
+                hint: "Hubungkan gadget (sedentari) + fast food (kalori berlebih) -> memicu kegemukan/obesitas.",
+                keywords: [
+                    { phrase: "fast food", weight: 35, alt: ["makanan cepat saji", "junk food", "boba", "kalori"] },
+                    { phrase: "gadget", weight: 35, alt: ["game", "sedentari", "kurang gerak", "layar"] },
+                    { phrase: "seimbang", weight: 30, alt: ["ketidakseimbangan", "pembakaran energi", "obesitas"] }
+                ],
+                modelAnswer: "Kebiasaan remaja bermain gadget sambil mengonsumsi fast food sangat relevan dengan teori kausalitas obesitas. Makanan cepat saji dan minuman bergula tinggi menyuplai kalori berlebihan ke dalam tubuh. Di sisi lain, aktivitas bermain gadget berjam-jam menurunkan pengeluaran energi karena tubuh berada pada kondisi pasif (sedentari). Ketidakseimbangan antara energi masuk dan energi yang dibakar inilah yang secara langsung mempercepat terjadinya obesitas pada remaja."
+            },
+            {
+                id: 11,
+                topic: "Analisis Komparatif",
+                title: "Perbandingan Teks Prosedur Kompleks vs Teks Eksplanasi Kompleks",
+                stimulus: "Teks Prosedur Kompleks dan Teks Eksplanasi Kompleks adalah dua jenis teks faktual yang sering ditemukan dalam pembelajaran Bahasa Indonesia Kelas XII.",
+                prompt: "Bandingkan perbedaan mendasar antara Teks Prosedur Kompleks dan Teks Eksplanasi Kompleks ditinjau dari: (a) Tujuan Komunikatif, (b) Fokus Bahasan Utama, dan (c) Struktur Teks!",
+                hint: "Prosedur: petunjuk langkah cara membuat/melakukan; Eksplanasi: penjelasan kausalitas mengapa/bagaimana fenomena terjadi.",
+                keywords: [
+                    { phrase: "langkah", weight: 35, alt: ["cara", "instruksi", "prosedur", "tujuan material"] },
+                    { phrase: "fenomena", weight: 35, alt: ["proses", "sebab akibat", "kausalitas", "pernyataan umum"] },
+                    { phrase: "struktur", weight: 30, alt: ["perbedaan struktur", "pernyataan umum vs tujuan"] }
+                ],
+                modelAnswer: "1. **Tujuan Komunikatif**:\n   - *Teks Prosedur*: Memberikan petunjuk langkah demi langkah agar pembaca berhasil melakukan/membuat sesuatu.\n   - *Teks Eksplanasi*: Menjelaskan proses terbentuk atau terhadinya suatu fenomena alam/sosial secara ilmiah.\n2. **Fokus Bahasan**:\n   - *Teks Prosedur*: Berfokus pada urutan tindakan manusia (instruksional).\n   - *Teks Eksplanasi*: Berfokus pada sebab-akibat terjadinya peristiwa atau fenomena (faktual-deskriptif).\n3. **Struktur Teks**:\n   - *Teks Prosedur*: Tujuan -> Alat/Bahan -> Langkah-langkah -> Penegasan Ulang.\n   - *Teks Eksplanasi*: Pernyataan Umum -> Deretan Penjelas (Kausalitas) -> Interpretasi."
+            },
+            {
+                id: 12,
+                topic: "Teks Prosedur Kompleks",
+                title: "Analisis Kalimat Imperatif & Persuasif dalam Teks Prosedur",
+                stimulus: "Ubah kalimat deklaratif berikut menjadi kalimat imperatif yang santun tetapi tegas untuk teks prosedur: 'Pengguna dapat mengklik tombol simpan setelah mengisi data.'",
+                prompt: "Ubahlah kalimat deklaratif di atas menjadi sebuah kalimat imperatif baku yang tepat digunakan dalam petunjuk teknis teks prosedur!",
+                hint: "Gunakan kata kerja imperatif seperti 'Kliklah' atau 'Tekan tombol simpan...'",
+                keywords: [
+                    { phrase: "klik", weight: 50, alt: ["kliklah", "tekan", "tekanlah"] },
+                    { phrase: "simpan", weight: 50, alt: ["tombol simpan", "setelah mengisi"] }
+                ],
+                modelAnswer: "Kalimat imperatif baku perbaikan:\n*'Kliklah tombol 'Simpan' setelah Anda selesai mengisi seluruh formulir data dengan benar!'*"
+            },
+            {
+                id: 13,
+                topic: "Teks Eksplanasi Kompleks",
+                title: "Peran Kata Teknis / Istilah Ilmiah dalam Teks Eksplanasi",
+                stimulus: "Dalam teks eksplanasi bencana tanah longsor, penulis menggunakan istilah 'saturasi air', 'infiltrasi tanah', dan 'erosi'.",
+                prompt: "Jelaskan mengapa penggunaan istilah ilmiah / kata teknis sangat penting dalam Teks Eksplanasi Kompleks jika dikaitkan dengan kadar keobjektifan dan keilmiahan teks!",
+                hint: "Istilah ilmiah meningkatkan keakuratan, presisi akademis, dan keobjektifan penjelasan.",
+                keywords: [
+                    { phrase: "objektif", weight: 35, alt: ["ilmiah", "keobjektifan"] },
+                    { phrase: "akurat", weight: 35, alt: ["presisi", "tepat", "jelas"] },
+                    { phrase: "kadar keilmiahan", weight: 30, alt: ["kredibilitas", "faktual"] }
+                ],
+                modelAnswer: "Penggunaan istilah ilmiah sangat penting karena:\n1. **Meningkatkan Keakuratan dan Presisi**: Menjelaskan konsep sains secara spesifik tanpa menimbulkan makna ganda (ambigu).\n2. **Memperkuat Keobjektifan dan Kredibilitas**: Menandakan bahwa penjelasan disusun berdasarkan metodologi dan keilmuan faktual yang dapat dipertanggungjawabkan secara akademis."
+            },
+            {
+                id: 14,
+                topic: "Penyuntingan Kebahasaan",
+                title: "Penyuntingan & Perbaikan Kebahasaan Paragraf Rumpang",
+                stimulus: "Cermati kalimat acak berikut: 'Sebab itu, makanan diproses oleh usus agar supaya nutrisi diserap maksimal.'",
+                prompt: "Suntinglah kalimat di atas agar menjadi kalimat efektif yang baku sesuai dengan kaidah PUEBI/EYD dan tidak bermakna pleonasme!",
+                hint: "Hilangkan kata pemborosan seperti 'agar supaya' dan sesuaikan konjungsi.",
+                keywords: [
+                    { phrase: "agar", weight: 50, alt: ["supaya"] },
+                    { phrase: "oleh karena itu", weight: 50, alt: ["sebab itu", "sehingga", "diserap"] }
+                ],
+                modelAnswer: "Kalimat perbaikan baku & efektif:\n*'Oleh karena itu, makanan diproses oleh usus agar nutrisi dapat diserap secara maksimal.'*\n*(Catatan: Kata 'agar supaya' mengalami pemborosan kata/pleonasme sehingga salah satu harus dihilangkan)*."
+            },
+            {
+                id: 15,
+                topic: "Teks Eksplanasi Kompleks",
+                title: "Mengabstraksi & Menyimpulkan Gagasan Utama",
+                stimulus: "Teks eksplanasi tentang fenomena demonstrasi massa menyimpulkan bahwa ketidakpuasan publik dan buntunya saluran komunikasi menjadi pemicu utama aksi jalanan.",
+                prompt: "Buatlah satu paragraf simpulan atau abstraksi ringkas (3-4 kalimat) yang merangkum fenomena sosial tersebut menggunakan bahasa baku Anda sendiri!",
+                hint: "Sebutkan ketidakpuasan publik, penyumbatan komunikasi, dan terjadinya aksi demonstrasi massa secara objektif.",
+                keywords: [
+                    { phrase: "komunikasi", weight: 35, alt: ["saluran komunikasi", "dialog"] },
+                    { phrase: "ketidakpuasan", weight: 35, alt: ["kekecewaan", "aspirasi"] },
+                    { phrase: "demonstrasi", weight: 30, alt: ["aksi massa", "protes"] }
+                ],
+                modelAnswer: "Demonstrasi massa merupakan fenomena sosial yang kerap dipicu oleh tingginya ketidakpuasan publik terhadap kebijakan tertentu. Tersumbatnya saluran komunikasi dan kurangnya dialog antara pemerintah dan masyarakat mempercepat Eskalasi ketegangan tersebut. Akibatnya, aksi penyampaian pendapat di jalanan menjadi pilihan terakhir warga untuk menyuarakan aspirasi mereka."
+            }
+        ];
+
+        let currentQuestionIdx = 0;
+        let userAnswers = Array(QUIZ_DATA.length).fill("");
+        let flaggedQuestions = Array(QUIZ_DATA.length).fill(false);
+        let quizMode = 'practice'; // 'practice' or 'exam'
+        let timerSeconds = 0;
+        let timerInterval = null;
+
+        window.onload = function() {
+            renderMatrix();
+            loadQuestion(0);
+            startTimer();
+        };
+
+        function startTimer() {
+            if (timerInterval) clearInterval(timerInterval);
+            timerSeconds = 0;
+            timerInterval = setInterval(() => {
+                timerSeconds++;
+                const mins = String(Math.floor(timerSeconds / 60)).padStart(2, '0');
+                const secs = String(timerSeconds % 60).padStart(2, '0');
+                document.getElementById('timerDisplay').innerText = `${mins}:${secs}`;
+            }, 1000);
+        }
+
+        function toggleAudio() {
+            soundFX.isMuted = !soundFX.isMuted;
+            document.getElementById('soundOnIcon').classList.toggle('hidden', soundFX.isMuted);
+            document.getElementById('soundOffIcon').classList.toggle('hidden', !soundFX.isMuted);
+        }
+
+        function switchMode(mode) {
+            soundFX.playClick();
+            quizMode = mode;
+            
+            const practiceBtn = document.getElementById('modePracticeBtn');
+            const examBtn = document.getElementById('modeExamBtn');
+            const evalPanel = document.getElementById('practiceEvaluationPanel');
+
+            if (mode === 'practice') {
+                practiceBtn.className = "px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all flex items-center gap-2 bg-teal-500 text-slate-950 shadow-neon-teal";
+                examBtn.className = "px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold text-slate-400 hover:text-white transition-all flex items-center gap-2";
+                evalPanel.classList.remove('hidden');
+            } else {
+                examBtn.className = "px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all flex items-center gap-2 bg-purple-500 text-white shadow-neon-purple";
+                practiceBtn.className = "px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold text-slate-400 hover:text-white transition-all flex items-center gap-2";
+                evalPanel.classList.add('hidden');
+            }
+
+            evaluateCurrentAnswer();
+        }
+
+        function renderMatrix() {
+            const containers = [
+                document.getElementById('questionMatrixDesktop'),
+                document.getElementById('questionMatrixMobile')
+            ];
+
+            containers.forEach(container => {
+                if (!container) return;
+                container.innerHTML = '';
+                
+                QUIZ_DATA.forEach((q, idx) => {
+                    const btn = document.createElement('button');
+                    btn.onclick = () => {
+                        soundFX.playClick();
+                        loadQuestion(idx);
+                        toggleMobileDrawer(false);
+                    };
+
+                    const isCurrent = idx === currentQuestionIdx;
+                    const isFilled = userAnswers[idx].trim().length > 0;
+                    const isFlagged = flaggedQuestions[idx];
+
+                    let bgClass = "bg-slate-900 border-slate-800 text-slate-400 hover:border-slate-700";
+                    if (isCurrent) {
+                        bgClass = "ring-2 ring-teal-400 bg-teal-500/20 text-teal-300 border-teal-500/50 font-bold";
+                    } else if (isFlagged) {
+                        bgClass = "bg-amber-500/20 text-amber-300 border-amber-500/40";
+                    } else if (isFilled) {
+                        bgClass = "bg-emerald-500/20 text-emerald-300 border-emerald-500/40 font-medium";
+                    }
+
+                    btn.className = `h-10 rounded-xl border flex flex-col items-center justify-center text-xs transition-all relative ${bgClass}`;
+                    btn.innerHTML = `
+                        <span>${idx + 1}</span>
+                        ${isFlagged ? '<span class="w-1.5 h-1.5 rounded-full bg-amber-400 absolute top-1 right-1"></span>' : ''}
+                    `;
+                    container.appendChild(btn);
+                });
+            });
+
+            // Update Progress Percentage
+            const filledCount = userAnswers.filter(a => a.trim().length > 0).length;
+            const percent = Math.round((filledCount / QUIZ_DATA.length) * 100);
+            document.getElementById('completionPercent').innerText = `${percent}%`;
+            document.getElementById('headerProgressText').innerText = `${filledCount}/15 Terjawab`;
+        }
+
+        function loadQuestion(index) {
+            currentQuestionIdx = index;
+            const q = QUIZ_DATA[index];
+
+            document.getElementById('questionNumberBadge').innerText = `Soal ${index + 1} dari 15`;
+            document.getElementById('questionTopicBadge').innerText = q.topic;
+            document.getElementById('questionTitle').innerText = q.title;
+            document.getElementById('questionStimulus').innerHTML = `
+                <p class="font-semibold text-slate-200 mb-2">Kontekstual Stimulus:</p>
+                <p class="italic text-slate-300 mb-3">${q.stimulus}</p>
+                <p class="font-bold text-teal-300 border-t border-slate-800 pt-2">${q.prompt}</p>
+            `;
+
+            // Answer Input
+            const textarea = document.getElementById('answerInput');
+            textarea.value = userAnswers[index];
+
+            // Flag state
+            const flagBtn = document.getElementById('flagBtn');
+            if (flaggedQuestions[index]) {
+                flagBtn.className = "px-3 py-1.5 rounded-lg text-xs font-semibold bg-amber-500/20 border border-amber-500/50 text-amber-300 flex items-center gap-1.5 transition-all";
+                document.getElementById('flagBtnText').innerText = "Ragu-Ragu";
+            } else {
+                flagBtn.className = "px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800/80 hover:bg-slate-700 border border-slate-700 text-slate-400 flex items-center gap-1.5 transition-all";
+                document.getElementById('flagBtnText').innerText = "Tandai Ragu";
+            }
+
+            // Hint & Model Answer reset
+            document.getElementById('hintBox').classList.add('hidden');
+            document.getElementById('modelAnswerBox').classList.add('hidden');
+            document.getElementById('hintBox').innerText = `💡 Petunjuk Kata Kunci: ${q.hint}`;
+            document.getElementById('modelAnswerText').innerText = q.modelAnswer;
+
+            // Nav Buttons State
+            document.getElementById('prevBtn').disabled = (index === 0);
+            document.getElementById('prevBtn').classList.toggle('opacity-50', index === 0);
+
+            renderMatrix();
+            evaluateCurrentAnswer();
+        }
+
+        function handleAnswerInput(text) {
+            userAnswers[currentQuestionIdx] = text;
+            renderMatrix();
+            evaluateCurrentAnswer();
+        }
+
+        function evaluateCurrentAnswer() {
+            const text = userAnswers[currentQuestionIdx] || "";
+            const charCount = text.length;
+            const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+
+            document.getElementById('wordCountDisplay').innerText = words;
+            document.getElementById('charCountDisplay').innerText = charCount;
+
+            const q = QUIZ_DATA[currentQuestionIdx];
+            const lowerText = text.toLowerCase();
+
+            let matchedWeight = 0;
+            let totalWeight = 0;
+
+            const chipsContainer = document.getElementById('conceptChipsContainer');
+            chipsContainer.innerHTML = '';
+
+            q.keywords.forEach(kw => {
+                totalWeight += kw.weight;
+                const isMatched = kw.alt.some(term => lowerText.includes(term.toLowerCase()));
+
+                if (isMatched) {
+                    matchedWeight += kw.weight;
+                }
+
+                // Render concept chip indicator
+                const chip = document.createElement('span');
+                chip.className = `px-2.5 py-1 rounded-lg text-[11px] font-medium border flex items-center gap-1.5 transition-all ${
+                    isMatched 
+                    ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40 shadow-sm' 
+                    : 'bg-slate-800/60 text-slate-500 border-slate-800'
+                }`;
+                chip.innerHTML = `
+                    <span>${isMatched ? '✓' : '○'}</span>
+                    <span>${kw.phrase}</span>
+                `;
+                chipsContainer.appendChild(chip);
+            });
+
+            const matchScore = totalWeight > 0 ? Math.round((matchedWeight / totalWeight) * 100) : 0;
+            const badge = document.getElementById('liveConceptScoreBadge');
+            badge.innerText = `Kelengkapan: ${matchScore}%`;
+
+            if (matchScore >= 80) {
+                badge.className = "text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-emerald-300";
+            } else if (matchScore >= 40) {
+                badge.className = "text-xs font-bold px-2.5 py-0.5 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-300";
+            } else {
+                badge.className = "text-xs font-bold px-2.5 py-0.5 rounded-full bg-slate-800 border border-slate-700 text-slate-400";
+            }
+        }
+
+        function toggleFlagCurrentQuestion() {
+            soundFX.playClick();
+            flaggedQuestions[currentQuestionIdx] = !flaggedQuestions[currentQuestionIdx];
+            loadQuestion(currentQuestionIdx);
+        }
+
+        function navigateQuestion(step) {
+            soundFX.playClick();
+            const newIdx = currentQuestionIdx + step;
+            if (newIdx >= 0 && newIdx < QUIZ_DATA.length) {
+                loadQuestion(newIdx);
+            }
+        }
+
+        function toggleHint() {
+            soundFX.playClick();
+            const box = document.getElementById('hintBox');
+            box.classList.toggle('hidden');
+        }
+
+        function toggleModelAnswer() {
+            soundFX.playClick();
+            const box = document.getElementById('modelAnswerBox');
+            box.classList.toggle('hidden');
+        }
+
+        function toggleMobileDrawer(show) {
+            soundFX.playClick();
+            const drawer = document.getElementById('mobileDrawer');
+            if (show) drawer.classList.remove('hidden');
+            else drawer.classList.add('hidden');
+        }
+
+        function toggleKisiKisiModal(show) {
+            soundFX.playClick();
+            const modal = document.getElementById('kisiKisiModal');
+            if (show) modal.classList.remove('hidden');
+            else modal.classList.add('hidden');
+        }
+
+        function toggleResultsModal(show) {
+            soundFX.playClick();
+            const modal = document.getElementById('resultsModal');
+            if (show) modal.classList.remove('hidden');
+            else modal.classList.add('hidden');
+        }
+
+        function confirmFinishExam() {
+            soundFX.playFinish();
+
+            let totalMatchedPoints = 0;
+            let grandTotalPoints = 0;
+            let totalWords = 0;
+
+            const reviewContainer = document.getElementById('reviewCardsContainer');
+            reviewContainer.innerHTML = '';
+
+            QUIZ_DATA.forEach((q, idx) => {
+                const answerText = userAnswers[idx] || "";
+                const lowerText = answerText.toLowerCase();
+                const words = answerText.trim() ? answerText.trim().split(/\s+/).length : 0;
+                totalWords += words;
+
+                let qWeightMatched = 0;
+                let qWeightTotal = 0;
+
+                q.keywords.forEach(kw => {
+                    qWeightTotal += kw.weight;
+                    if (kw.alt.some(term => lowerText.includes(term.toLowerCase()))) {
+                        qWeightMatched += kw.weight;
+                    }
+                });
+
+                const qPercent = qWeightTotal > 0 ? Math.round((qWeightMatched / qWeightTotal) * 100) : 0;
+                totalMatchedPoints += qPercent;
+                grandTotalPoints += 100;
+
+                // Create Review Card
+                const card = document.createElement('div');
+                card.dataset.scoreClass = qPercent >= 80 ? 'high' : 'low';
+                card.className = "glass-card p-5 rounded-2xl border border-slate-800 space-y-3 review-card";
+
+                card.innerHTML = `
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                        <span class="font-bold text-sm text-slate-200">Soal ${idx + 1}: ${q.title}</span>
+                        <span class="text-xs font-bold px-3 py-0.5 rounded-full ${qPercent >= 80 ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'}">
+                            Kelengkapan Konsep: ${qPercent}%
+                        </span>
+                    </div>
+
+                    <div class="space-y-2 text-xs">
+                        <div>
+                            <span class="text-slate-400 font-semibold">Jawaban Anda (${words} kata):</span>
+                            <p class="p-3 bg-slate-950 rounded-xl border border-slate-800 text-slate-200 mt-1 leading-relaxed ${answerText.trim() ? '' : 'italic text-slate-500'}">
+                                ${answerText.trim() ? answerText : '[Tidak ada jawaban ditulis]'}
+                            </p>
+                        </div>
+
+                        <div>
+                            <span class="text-teal-400 font-semibold">Kunci Jawaban Baku SMAN 1 Badegan:</span>
+                            <div class="p-3 bg-slate-900/90 rounded-xl border border-teal-500/30 text-slate-300 mt-1 leading-relaxed font-sans">
+                                ${q.modelAnswer}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                reviewContainer.appendChild(card);
+            });
+
+            // Calculate Overall Score (Scaled 0 - 100)
+            const finalScore = Math.round((totalMatchedPoints / grandTotalPoints) * 100);
+
+            document.getElementById('finalScoreText').innerText = finalScore;
+            document.getElementById('conceptAccuracyMetric').innerText = `${finalScore}%`;
+            document.getElementById('totalWordsMetric').innerText = `${totalWords} Kata`;
+
+            const mins = String(Math.floor(timerSeconds / 60)).padStart(2, '0');
+            const secs = String(timerSeconds % 60).padStart(2, '0');
+            document.getElementById('timeSpentMetric').innerText = `${mins}:${secs}`;
+
+            // Set Radial Gauge Animation
+            const scorePath = document.getElementById('scoreRadialPath');
+            scorePath.setAttribute('stroke-dasharray', `${finalScore}, 100`);
+
+            // Predicate Logic
+            const predBadge = document.getElementById('predicateBadge');
+            const kkmMetric = document.getElementById('kkmStatusMetric');
+
+            if (finalScore >= 88) {
+                predBadge.innerText = "Predikat: Sangat Baik (A)";
+                predBadge.className = "px-3 py-1 bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 rounded-full text-xs font-bold";
+                kkmMetric.innerText = "SANGAT TUNTAS";
+                kkmMetric.className = "text-xl font-bold text-emerald-400";
+            } else if (finalScore >= 75) {
+                predBadge.innerText = "Predikat: Baik (B)";
+                predBadge.className = "px-3 py-1 bg-teal-500/20 text-teal-300 border border-teal-500/30 rounded-full text-xs font-bold";
+                kkmMetric.innerText = "TUNTAS (KKM)";
+                kkmMetric.className = "text-xl font-bold text-teal-300";
+            } else {
+                predBadge.innerText = "Predikat: Perlu Bimbingan (C/D)";
+                predBadge.className = "px-3 py-1 bg-amber-500/20 text-amber-300 border border-amber-500/30 rounded-full text-xs font-bold";
+                kkmMetric.innerText = "BELUM TUNTAS";
+                kkmMetric.className = "text-xl font-bold text-amber-400";
+            }
+
+            // Confetti Celebration if >= 75
+            if (finalScore >= 75 && typeof confetti === 'function') {
+                confetti({
+                    particleCount: 120,
+                    spread: 80,
+                    origin: { y: 0.6 }
+                });
+            }
+
+            toggleResultsModal(true);
+        }
+
+        function filterReviewCards(filter) {
+            soundFX.playClick();
+            const cards = document.querySelectorAll('.review-card');
+            
+            document.getElementById('filterAllBtn').className = filter === 'all' ? "px-3 py-1 rounded-lg font-medium bg-slate-800 text-teal-300" : "px-3 py-1 rounded-lg font-medium text-slate-400 hover:text-white";
+            document.getElementById('filterHighBtn').className = filter === 'high' ? "px-3 py-1 rounded-lg font-medium bg-slate-800 text-teal-300" : "px-3 py-1 rounded-lg font-medium text-slate-400 hover:text-white";
+            document.getElementById('filterLowBtn').className = filter === 'low' ? "px-3 py-1 rounded-lg font-medium bg-slate-800 text-teal-300" : "px-3 py-1 rounded-lg font-medium text-slate-400 hover:text-white";
+
+            cards.forEach(card => {
+                if (filter === 'all') {
+                    card.classList.remove('hidden');
+                } else if (filter === 'high' && card.dataset.scoreClass === 'high') {
+                    card.classList.remove('hidden');
+                } else if (filter === 'low' && card.dataset.scoreClass === 'low') {
+                    card.classList.remove('hidden');
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+        }
+
+        function resetQuiz() {
+            soundFX.playClick();
+            userAnswers = Array(QUIZ_DATA.length).fill("");
+            flaggedQuestions = Array(QUIZ_DATA.length).fill(false);
+            currentQuestionIdx = 0;
+            toggleResultsModal(false);
+            loadQuestion(0);
+            startTimer();
+        }
+    </script>
+
+</body>
+</html>
